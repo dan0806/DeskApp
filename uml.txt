@@ -1,0 +1,116 @@
++--------------------------------------+
+|               Pessoa                 |
++--------------------------------------+
+| - nome : str                         |
+| - email : str                        |
++--------------------------------------+
+| + apresentar() : str                 |
+| + __str__() : str                    |
++--------------------------------------+
+                  ^
+                  |
+          --------o--------
+          |               |
+          |               |
++------------------+   +------------------+
+|      Aluno       |   |    Professor     |
++------------------+   +------------------+
+| - ra : str       |   |                  |
++------------------+   +------------------+
+| + apresentar()   |   | + apresentar()   |
++------------------+   +------------------+
+
+
++------------------------------------------------+
+|                  Matricula                     |
++------------------------------------------------+
+| - aluno : Aluno                               |
+| - disciplina : Disciplina                     |
+| - nota : float                                |
+| - frequencia : float                          |
+| - status : str                                |
++------------------------------------------------+
+| + registrar_nota(nota)                        |
+| + registrar_frequencia(freq)                  |
+| + atualizar_status()                          |
+| + __str__()                                   |
++------------------------------------------------+
+
+
++------------------------------------------------+
+|                 Disciplina                     |
++------------------------------------------------+
+| - nome : str                                  |
+| - codigo : str                                |
+| - professor : Professor                       |
+| - matriculas : list<Matricula>                |
++------------------------------------------------+
+| + matricular_aluno(aluno)                     |
+| + listar_alunos()                             |
+| + buscar_matricula(ra)                        |
+| + apresentar()                                |
+| + __str__()                                   |
++------------------------------------------------+
+
+
++-----------------------------------------------+
+|              AlunoController                  |
++-----------------------------------------------+
+| - alunos : list<Aluno>                        |
++-----------------------------------------------+
+| + cadastrar(nome,email,ra) : Aluno            |
+| + listar() : list<Aluno>                      |
++-----------------------------------------------+
+
+
++-----------------------------------------------+
+|            ProfessorController                |
++-----------------------------------------------+
+| - professores : list<Professor>               |
++-----------------------------------------------+
+| + cadastrar(nome,email) : Professor           |
+| + listar() : list<Professor>                  |
++-----------------------------------------------+
+
+
++---------------------------------------------------------+
+|               DisciplinaController                      |
++---------------------------------------------------------+
+| - disciplinas : list<Disciplina>                        |
++---------------------------------------------------------+
+| + cadastrar(nome,codigo,professor) : Disciplina         |
+| + listar() : list<Disciplina>                           |
+| + matricular_aluno(disciplina,aluno)                    |
+| + listar_alunos(disciplina)                             |
+| + lancar_nota(disciplina,ra,nota)                       |
+| + lancar_frequencia(disciplina,ra,freq)                 |
++---------------------------------------------------------+
+
+
++-----------------------------------------------+
+|            RelatorioController                |
++-----------------------------------------------+
++-----------------------------------------------+
+| + gerar_relatorio(disciplina) : str           |
++-----------------------------------------------+
+
+
+======================== RELACIONAMENTOS ========================
+
+Aluno --------o> Pessoa
+
+Professor ----o> Pessoa
+
+Disciplina <x>(1)--------------------(0,*) Matricula
+
+Disciplina <>(1)----------------------(1) Professor
+
+Matricula <>(1)-----------------------(1) Aluno
+
+AlunoController <..............> Aluno
+
+ProfessorController <..........> Professor
+
+DisciplinaController <.........> Disciplina
+
+RelatorioController <..........> Disciplina
