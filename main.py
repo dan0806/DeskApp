@@ -2,6 +2,8 @@ from controllers.aluno_controller import AlunoController
 from controllers.professor_controller import ProfessorController
 from controllers.disciplina_controller import DisciplinaController
 from controllers.relatorio_controller import RelatorioController
+import tkinter as tk
+from views.app import DeskAppGUI
 
 
 def main():
@@ -95,4 +97,6 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    janela_principal = tk.Tk()
+    app = DeskAppGUI(janela_principal)
+    janela_principal.mainloop()
