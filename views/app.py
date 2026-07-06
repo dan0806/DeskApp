@@ -11,40 +11,34 @@ class DeskAppGUI:
         self.root.title("DeskApp - Sistema Escolar Completo")
         self.root.geometry("700x600")
         
-        # Tema e Estilos Básicos (que fizemos anteriormente)
         self.style = ttk.Style()
         self.style.theme_use('winnative')
         self.root.configure(bg="#4040fa")
         
-        # 1. INICIALIZANDO OS CONTROLADORES
         self.aluno_controller = AlunoController()
         self.prof_controller = ProfessorController()
         self.disciplina_controller = DisciplinaController()
         self.relatorio_controller = RelatorioController()
 
-        # 2. CRIANDO O SISTEMA DE ABAS (Agora com 4 abas)
         self.notebook = ttk.Notebook(self.root)
         self.notebook.pack(pady=10, expand=True, fill='both')
 
         self.tab_pessoas = ttk.Frame(self.notebook)
         self.tab_disciplinas = ttk.Frame(self.notebook)
-        self.tab_notas = ttk.Frame(self.notebook)      # <--- NOVA ABA
+        self.tab_notas = ttk.Frame(self.notebook)
         self.tab_relatorios = ttk.Frame(self.notebook)
 
         self.notebook.add(self.tab_pessoas, text='1. Cadastros')
         self.notebook.add(self.tab_disciplinas, text='2. Disciplinas/Matrículas')
-        self.notebook.add(self.tab_notas, text='3. Lançar Notas') # <--- NOVA ABA
+        self.notebook.add(self.tab_notas, text='3. Lançar Notas')
         self.notebook.add(self.tab_relatorios, text='4. Relatórios')
 
-        # Constrói o visual de cada aba
         self.montar_tab_pessoas()
         self.montar_tab_disciplinas()
-        self.montar_tab_notas() # Inicializa a nova aba
+        self.montar_tab_notas()
         self.montar_tab_relatorios()
 
-    # =================================================================
     # MONTAGEM DAS TELAS (FRONT-END)
-    # =================================================================
     
     def montar_tab_pessoas(self):
         frame_aluno = ttk.LabelFrame(self.tab_pessoas, text=" Cadastrar Novo Aluno ")
@@ -108,7 +102,6 @@ class DeskAppGUI:
 
         ttk.Button(frame_mat, text="Efetivar Matrícula", command=self.matricular_aluno).grid(row=2, column=0, columnspan=2, pady=10)
 
-    # --- NOVA ABA: TAB NOTAS E FREQUÊNCIA ---
     def montar_tab_notas(self):
         frame_notas = ttk.LabelFrame(self.tab_notas, text=" Registro de Desempenho ")
         frame_notas.pack(fill="x", padx=15, pady=10)
@@ -116,7 +109,6 @@ class DeskAppGUI:
         ttk.Label(frame_notas, text="1º Selecione a Disciplina:").grid(row=0, column=0, padx=10, pady=5, sticky="e")
         self.combo_notas_disc = ttk.Combobox(frame_notas, width=37, state="readonly")
         self.combo_notas_disc.grid(row=0, column=1, padx=10, pady=5)
-        # Gatilho Mágico: Atualiza os alunos disponíveis assim que escolher a disciplina
         self.combo_notas_disc.bind('<<ComboboxSelected>>', self.filtrar_alunos_matriculados)
 
         ttk.Label(frame_notas, text="2º Selecione o Aluno:").grid(row=1, column=0, padx=10, pady=5, sticky="e")
@@ -145,10 +137,6 @@ class DeskAppGUI:
 
         self.texto_relatorio = tk.Text(frame_rel, height=18, width=70, font=("Courier", 10), bg="#ffffff")
         self.texto_relatorio.pack(pady=10)
-
-    # =================================================================
-    # REGRAS DE NEGÓCIO E CONTROLES DE EVENTO
-    # =================================================================
     
     def atualizar_listas_dropdown(self):
         self.combo_professores['values'] = [f"{p.nome} ({p.email})" for p in self.prof_controller.listar()]
@@ -166,7 +154,6 @@ class DeskAppGUI:
             codigo_disc = disc_sel.split("(")[1].strip(")")
             disc = next((d for d in self.disciplina_controller.listar() if d.codigo == codigo_disc), None)
             if disc:
-                # Extrai apenas os alunos que têm uma Matrícula dentro da lista desta Disciplina
                 self.combo_notas_aluno['values'] = [f"{m.aluno.nome} ({m.aluno.ra})" for m in disc.matriculas]
                 self.combo_notas_aluno.set('') 
 
@@ -258,13 +245,11 @@ class DeskAppGUI:
 
                 disc = next((d for d in self.disciplina_controller.listar() if d.codigo == codigo_disc), None)
                 if disc:
-                    # Encontra a matrícula real do aluno dentro da disciplina
                     matricula_alvo = next((m for m in disc.matriculas if m.aluno.ra == ra_aluno), None)
                     if matricula_alvo:
                         matricula_alvo.nota = nota
                         matricula_alvo.frequencia = freq
                         
-                        # CRITÉRIO DE APROVAÇÃO (Você pode alterar o 6.0 se sua escola usar 5.0 ou 7.0)
                         if nota >= 6.0 and freq >= 75.0:
                             matricula_alvo.status = "Aprovado"
                         else:
@@ -299,7 +284,6 @@ class DeskAppGUI:
                     texto += " Nenhuma matrícula registrada para esta disciplina.\n"
                 else:
                     for m in disc.matriculas:
-                        # Formata o visual de acordo com o status
                         marca = "✅" if m.status == "Aprovado" else ("❌" if m.status == "Reprovado" else "⏳")
                         
                         texto += f" 👤 Aluno: {m.aluno.nome} (RA: {m.aluno.ra})\n"
@@ -312,11 +296,3 @@ class DeskAppGUI:
                 self.texto_relatorio.insert(tk.END, texto)
         else:
             messagebox.showwarning("Aviso", "Selecione uma disciplina.")
-
-# =================================================================
-# EXECUÇÃO DO APLICATIVO
-# =================================================================
-if __name__ == "__main__":
-    janela_principal = tk.Tk()
-    app = DeskAppGUI(janela_principal)
-    janela_principal.mainloop()
